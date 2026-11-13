@@ -1,40 +1,41 @@
 const prisma = require("../config/prisma")
 
-exports.changeOrderStatus = async (req,res)=> {
-    try{
-        const {orderId,orderStatus} = req.body
+exports.changeOrderStatus = async (req, res) => {
+    try {
+        const { orderId, orderStatus } = req.body
 
-        const OrderUpdate = await prisma.order.update({
-            where:{id: orderId},
-            date:{orderStatus:orderStatus}
+        const orderUpdate = await prisma.order.update({
+            where: { id: Number(orderId) },
+            data: { orderStatus: orderStatus }
         })
-        res.json(OrderUpdate)
-    } catch(err){
+        res.json(orderUpdate)
+    } catch (err) {
         console.log(err)
-        res.orderStatus(500).json({messga:"Server Erro"})
+        res.status(500).json({ message: "Server Error" })
     }
 }
-exports.getOrderAdmin = async(req,res)=>{
-    try{
+
+exports.getOrderAdmin = async (req, res) => {
+    try {
         const order = await prisma.order.findMany({
-            include:{
-                products:{
-                    include:{
-                        product:true
+            include: {
+                products: {
+                    include: {
+                        product: true
                     }
                 },
-                orderedBy:{
-                    select:{
-                        id:true,
+                orderedBy: {
+                    select: {
+                        id: true,
                         email: true,
-                        address:true,
+                        address: true,
                     }
                 }
             }
         })
         res.json(order)
-    } catch (err){
+    } catch (err) {
         console.log(err)
-        res.status(500).json({messga:"Server Error"})
+        res.status(500).json({ message: "Server Error" })
     }
 }
